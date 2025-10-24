@@ -1,0 +1,34 @@
+# =================================================================
+# Archivo .gitignore para un proyecto Node.js con Express y Vercel
+# =================================================================
+
+# 1. Seguridad - ¡El más importante!
+# Ignora el archivo que contiene todas tus contraseñas y claves secretas.
+# NUNCA subas este archivo a un repositorio público.
+.env
+
+# 2. Dependencias
+# Ignora la carpeta que contiene todas las librerías de terceros.
+# Se puede regenerar en cualquier momento ejecutando "npm install".
+node_modules/
+
+# 3. Archivos de Despliegue
+# Vercel crea esta carpeta para los resultados de la compilación y el despliegue.
+# No debe estar en el control de versiones.
+.vercel/
+
+# 4. Archivos del Sistema Operativo
+# Archivos basura generados por macOS, Windows y Linux.
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 5. Archivos de Log y Debug
+# Ignora archivos de registro que se puedan generar durante la ejecución o por errores.
+logs/
+*.log
+npm-debug.log*
+
+# 6. Archivos del Editor de Código (Opcional pero recomendado)
+# Ignora la configuración personal de tu editor (ej. Visual Studio Code).
+.vscode/
