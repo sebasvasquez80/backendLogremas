@@ -38,20 +38,20 @@ export const loginUsuario = async (req, res) => {
     }
 
     try {
-        const { data: usuario, error } = await supabase
+        const { data: usuarioEncontrado, error } = await supabase
             .from('usuarios')
             .select('*, rol:id_rol(nombre)')
             .eq('usuario', usuario)
             .single();
 
-        if (error || !usuario) {
+        if (error || !usuarioEncontrado) {
             return res.status(404).json({ error: 'Usuario no encontrado.' });
         }
 
         // ### NUEVA VERIFICACIÓN DE SEGURIDAD ###
         // Si por alguna razón la relación con la tabla 'rol' falla en la base de datos, 
         // 'usuario.rol' será nulo. Esta comprobación evita que la aplicación se rompa.
-        if (!usuario.rol) {
+        if (!usuarioEncontrado.rol) {
             console.error("Error grave: la relación con la tabla 'rol' es nula para el usuario:", usuario);
             return res.status(500).json({ error: "Error de configuración del servidor: no se pudo encontrar el rol del usuario." });
         }
@@ -62,10 +62,11 @@ export const loginUsuario = async (req, res) => {
         }
 
         const payload = {
-            id: usuario.id,
-            usuario: usuario.usuario,
-            rol: usuario.rol.nombre,
-            id_rol: usuario.id_rol
+            id: usuarioEncontrado.id,
+            usuario: usuarioEncontrado.usuario,
+            rol: usuarioEncontrado.rol.nombre,
+            id_rol: usuarioEncontrado.id_rol,
+            id_subregion: usuarioEncontrado.id_subregion
         };
 
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
