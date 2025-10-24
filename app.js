@@ -27,7 +27,7 @@ app.listen(PORT, () => {
     console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
 
-app.get("/", (_, res) => res.send("API corona corriendo"));
+app.get("/", (_, res) => res.send("API logremas corriendo"));
 
 // Exportar la app para que Vercel pueda usarla
 export default app;
