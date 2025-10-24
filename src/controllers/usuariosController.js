@@ -33,7 +33,7 @@ export const registrarUsuario = async (req, res) => {
 // --- FUNCIÓN PARA INICIAR SESIÓN (CON LA CORRECCIÓN) ---
 export const loginUsuario = async (req, res) => {
     const { usuario: nombreUsuario, contraseña } = req.body;
-    if (!nombreUsuario|| !contraseña) {
+    if (!nombreUsuario || !contraseña) {
         return res.status(400).json({ error: 'Faltan nombre de usuario o contraseña' });
     }
 
@@ -52,11 +52,11 @@ export const loginUsuario = async (req, res) => {
         // Si por alguna razón la relación con la tabla 'rol' falla en la base de datos, 
         // 'usuario.rol' será nulo. Esta comprobación evita que la aplicación se rompa.
         if (!usuarioEncontrado.rol) {
-            console.error("Error grave: la relación con la tabla 'rol' es nula para el usuario:", usuario);
+            console.error("Error grave: la relación con la tabla 'rol' es nula para el usuario:", usuarioEncontrado);
             return res.status(500).json({ error: "Error de configuración del servidor: no se pudo encontrar el rol del usuario." });
         }
 
-        const esContraseñaValida = await bcrypt.compare(contraseña, usuario.contraseña);
+        const esContraseñaValida = await bcrypt.compare(contraseña, usuarioEncontrado.contraseña);
         if (!esContraseñaValida) {
             return res.status(401).json({ error: 'Contraseña incorrecta.' });
         }
