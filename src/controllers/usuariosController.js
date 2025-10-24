@@ -32,8 +32,8 @@ export const registrarUsuario = async (req, res) => {
 
 // --- FUNCIÓN PARA INICIAR SESIÓN (CON LA CORRECCIÓN) ---
 export const loginUsuario = async (req, res) => {
-    const { usuario: nombreUsuarioForm, contraseña } = req.body;
-    if (!usuario|| !contraseña) {
+    const { usuario: nombreUsuario, contraseña } = req.body;
+    if (!nombreUsuario|| !contraseña) {
         return res.status(400).json({ error: 'Faltan nombre de usuario o contraseña' });
     }
 
@@ -41,7 +41,7 @@ export const loginUsuario = async (req, res) => {
         const { data: usuarioEncontrado, error } = await supabase
             .from('usuarios')
             .select('*, rol:id_rol(nombre)')
-            .eq('usuario', nombreUsuarioForm)
+            .eq('usuario', nombreUsuario)
             .single();
 
         if (error || !usuarioEncontrado) {
