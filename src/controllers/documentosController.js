@@ -22,6 +22,8 @@ export const registrarDocumento = async (req, res) => {
 
 export const obtenerDocumentos = async (req, res) => {
     try {
+
+        const usuarioAutenticado = req.user;
         // Leemos los posibles filtros que vienen en la URL (ej: ?page_id=2)
         const { id_pagina } = req.query;
 
@@ -41,8 +43,9 @@ export const obtenerDocumentos = async (req, res) => {
             // Podríamos devolver error o una lista vacía.
             console.warn(`Usuario ${usuarioAutenticado.usuario} (rol ${usuarioAutenticado.id_rol}) no tiene subregión definida en el token.`);
             // Para devolver lista vacía en este caso:
-            // return res.status(200).json([]); 
+            // return res.status(200).json([]);  
         }
+
         // Ejecutamos la consulta (con o sin el filtro)
         const { data, error } = await query;
 
