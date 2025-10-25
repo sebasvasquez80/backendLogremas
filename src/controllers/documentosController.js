@@ -35,15 +35,15 @@ export const obtenerDocumentos = async (req, res) => {
             query = query.eq('id_pagina', id_pagina);
         }
 
-        if (usuarioAutenticado.id_rol !== 1 && usuarioAutenticado.id_subregion != null) {
-            // ...añadimos el filtro.
-            query = query.eq('id_subregion', usuarioAutenticado.id_subregion);
-        } else if (usuarioAutenticado.id_rol !== 1 && usuarioAutenticado.id_subregion == null) {
-            // Opcional: Si no es admin y no tiene subregión, ¿qué hacemos? 
-            // Podríamos devolver error o una lista vacía.
-            console.warn(`Usuario ${usuarioAutenticado.usuario} (rol ${usuarioAutenticado.id_rol}) no tiene subregión definida en el token.`);
-            // Para devolver lista vacía en este caso:
-            // return res.status(200).json([]);  
+        if (usuarioAutenticado.id_rol !== 1 && usuarioAutenticado.id_rol !== 4) {
+            // Si NO es Admin NI Desarrollo, APLICA el filtro de subregión
+
+            // Verificamos si la subregión existe en el token antes de filtrar
+            if (usuarioAutenticado.id_subregion != null) {
+                query = query.eq('id_subregion', usuarioAutenticado.id_subregion);
+            } else {
+                console.warn(`Usuario ${usuarioAutenticado.usuario} (rol ${usuarioAutenticado.id_rol}) no tiene subregión definida en el token. No se mostrarán documentos.`);
+            }
         }
 
         // Ejecutamos la consulta (con o sin el filtro)
