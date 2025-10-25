@@ -1,14 +1,14 @@
 import { supabase } from '../services/supabase.service.js';
 
 export const registrarDocumento = async (req, res) => {
-    const { nombre, url, id_rol, page_id } = req.body;
-    if (!nombre || !url || !id_rol || !page_id) {
-        return res.status(400).json({ error: 'Faltan datos obligatorios: nombre, url, id_rol' });
+    const { nombre, url, id_subregion, id_rol, id_pagina } = req.body;
+    if (!nombre || !url || !id_subregion || !id_rol || !id_pagina) {
+        return res.status(400).json({ error: 'Faltan datos obligatorios: nombre, url, id_subregion, id_rol, id_pagina' });
     }
     try {
         const { data, error } = await supabase
             .from('documentos')
-            .insert([{ nombre, url, id_rol, page_id }])
+            .insert([{ nombre, url, id_subregion, id_rol, id_pagina }])
             .select()
             .single();
         if (error) throw error;
@@ -23,14 +23,14 @@ export const registrarDocumento = async (req, res) => {
 export const obtenerDocumentos = async (req, res) => {
     try {
         // Leemos los posibles filtros que vienen en la URL (ej: ?page_id=2)
-        const { page_id } = req.query;
+        const { id_pagina } = req.query;
 
         // Empezamos a construir la consulta a la base de datos
         let query = supabase.from('documentos').select('*'); // Seleccionamos todo
 
         // Si nos pasaron un 'page_id' en la URL, añadimos un filtro a la consulta
-        if (page_id) {
-            query = query.eq('page_id', page_id);
+        if (id_pagina) {
+            query = query.eq('id_pagina', id_pagina);
         }
 
         // Ejecutamos la consulta (con o sin el filtro)
@@ -45,11 +45,11 @@ export const obtenerDocumentos = async (req, res) => {
 
 export const actualizarDocumento = async (req, res) => {
     const { id } = req.params;
-    const { nombre, url, id_rol, page_id } = req.body;
+    const { nombre, url, id_subregion, id_rol, id_pagina} = req.body;
     try {
         const { data, error } = await supabase
             .from('documentos')
-            .update({ nombre, url, id_rol, page_id })
+            .update({ nombre, url, id_subregion, id_rol, id_pagina })
             .eq('id', id)
             .select();
         if (error) throw error;
