@@ -33,11 +33,16 @@ export const obtenerDocumentos = async (req, res) => {
             query = query.eq('id_pagina', id_pagina);
         }
 
-        // if (usuarioAutenticado.id_rol !== 1) {
-        //     // ...añadimos un filtro para que solo traiga documentos de SU subregión.
-        //     query = query.eq('id_subregion', usuarioAutenticado.id_subregion);
-        // }
-
+        if (usuarioAutenticado.id_rol !== 1 && usuarioAutenticado.id_subregion != null) {
+            // ...añadimos el filtro.
+            query = query.eq('id_subregion', usuarioAutenticado.id_subregion);
+        } else if (usuarioAutenticado.id_rol !== 1 && usuarioAutenticado.id_subregion == null) {
+            // Opcional: Si no es admin y no tiene subregión, ¿qué hacemos? 
+            // Podríamos devolver error o una lista vacía.
+            console.warn(`Usuario ${usuarioAutenticado.usuario} (rol ${usuarioAutenticado.id_rol}) no tiene subregión definida en el token.`);
+            // Para devolver lista vacía en este caso:
+            // return res.status(200).json([]); 
+        }
         // Ejecutamos la consulta (con o sin el filtro)
         const { data, error } = await query;
 
@@ -50,7 +55,7 @@ export const obtenerDocumentos = async (req, res) => {
 
 export const actualizarDocumento = async (req, res) => {
     const { id } = req.params;
-    const { nombre, url, id_subregion, id_rol, id_pagina} = req.body;
+    const { nombre, url, id_subregion, id_rol, id_pagina } = req.body;
     try {
         const { data, error } = await supabase
             .from('documentos')
