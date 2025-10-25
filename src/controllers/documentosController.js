@@ -33,6 +33,11 @@ export const obtenerDocumentos = async (req, res) => {
             query = query.eq('id_pagina', id_pagina);
         }
 
+        if (usuarioAutenticado.id_rol !== 1) {
+            // ...añadimos un filtro para que solo traiga documentos de SU subregión.
+            query = query.eq('id_subregion', usuarioAutenticado.id_subregion);
+        }
+
         // Ejecutamos la consulta (con o sin el filtro)
         const { data, error } = await query;
 
