@@ -7,6 +7,6 @@ const router = express.Router();
 
 // GET /api/documentos -> Obtener todos los documentos
 router.get('/utilidad', protegerRuta, getGraficoUtilidad);
-router.get('/centros', getCentros);
+router.get('/centros', protegerRuta, getCentros);
 
 export default router;
