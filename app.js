@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import usuariosRoutes from './src/routes/usuariosRoutes.js';
 import documentosRoutes from './src/routes/documentosRoutes.js';
+import graficosRoutes from './src/routes/graficosRoutes.js';
 
 // Cargar variables de entorno
 dotenv.config();
@@ -18,6 +19,7 @@ app.use(express.json()); // Permite que el servidor entienda peticiones con cuer
 // Todas las rutas definidas en 'empleadosRoutes' empezarán con '/api/empleados'
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/documentos', documentosRoutes);
+app.use('/api/graficos', graficosRoutes);
 
 // Definir el puerto
 const PORT = process.env.PORT || 4000;
