@@ -57,3 +57,25 @@ export const getGraficoUtilidad = async (req, res) => {
     res.status(500).json({ message: 'Error al obtener datos del gráfico', error: error.message });
   }
 };
+
+// Controlador para obtener la lista de todos los centros
+export const getCentros = async (req, res) => {
+  try {
+    // 1. Consultamos directamente la tabla 'centros'
+    const { data, error } = await supabase
+      .from('centros')
+      .select('id, nombre') // Solo traemos el ID y el nombre
+      .order('nombre', { ascending: true }); // Los ordenamos alfabéticamente
+
+    if (error) {
+      throw error;
+    }
+
+    // 2. 'data' ya es un array: [ { id: 1, nombre_centro: 'SCPO' }, { id: 2, ... } ]
+    res.status(200).json(data);
+
+  } catch (error) {
+    console.error('Error en getCentros:', error.message);
+    res.status(500).json({ message: 'Error al obtener lista de centros', error: error.message });
+  }
+};
