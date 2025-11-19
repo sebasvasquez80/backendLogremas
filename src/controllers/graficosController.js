@@ -57,3 +57,37 @@ export const getCentros = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener lista de centros', error: error.message });
     }
 };
+
+
+export const getGraficoPersonas = async (req, res) => {
+    try {
+        const { centroId, ano, mesInicio, mesFin } = req.query;
+
+        if (!centroId || !ano || !mesInicio || !mesFin) {
+            return res.status(400).json({ 
+                message: 'Se requiere Centro, Año, Mes de Inicio y Mes de Fin.' 
+            });
+        }
+
+        // 1. Llamamos a la RPC para obtener los datos
+        const { data, error } = await supabase.rpc('get_personas_grafico', {
+            centro_id_param: centroId,
+            ano_param: ano,
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // 2. RETORNAMOS LOS DATOS PUROS
+        // Formato: [ { fecha_label: 'Ene', personas_valor: 50 }, ... ]
+        // EL FRONTEND AHORA MANEJA LA TRANSFORMACIÓN A CHART.JS
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error en getGraficoPersonas:', error.message); 
+        res.status(500).json({ message: 'Error al obtener datos del gráfico de personas', error: error.message });
+    }
+};
