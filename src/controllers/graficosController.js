@@ -1,29 +1,31 @@
 import { supabase } from '../services/supabase.service.js';
-// No necesitas la importación de Chart.js ni la lógica de transformación
 
 export const getGraficoUtilidad = async (req, res) => {
     try {
-        const { centroId, ano, mes } = req.query;
+        // CORRECCIÓN: Ahora leemos mesInicio y mesFin
+        const { centroId, ano, mesInicio, mesFin } = req.query;
 
-        if (!centroId || !ano) {
+        // Validación actualizada
+        if (!centroId || !ano || !mesInicio || !mesFin) {
             return res.status(400).json({ 
-                message: 'Se requiere un centroId y un año (ano) para generar el gráfico.' 
+                message: 'Se requiere Centro, Año, Mes de Inicio y Mes de Fin.' 
             });
         }
 
         // 1. Llamamos a la RPC para obtener los datos
         const { data, error } = await supabase.rpc('get_utilidad_grafico', {
+            // Pasamos los 4 parámetros
             centro_id_param: centroId,
             ano_param: ano,
-            mes_param: mes || null 
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
         });
 
         if (error) {
             throw error;
         }
 
-        // 2. RETORNAMOS LOS DATOS TAL CUAL (Puros, sin formato Chart.js)
-        // data: [ { fecha_label: 'Ene', utilidad_valor: -0.01 }, ... ]
+        // 2. RETORNAMOS LOS DATOS PUROS
         res.status(200).json(data);
 
     } catch (error) {
@@ -31,6 +33,8 @@ export const getGraficoUtilidad = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener datos del gráfico', error: error.message });
     }
 };
+
+// ... (getCentros está correcto, no se muestra aquí) ...
 
 // Controlador para obtener la lista de todos los centros (NO CAMBIA)
 export const getCentros = async (req, res) => {
