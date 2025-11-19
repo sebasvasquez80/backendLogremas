@@ -6,7 +6,7 @@ import { getCentros } from '../controllers/graficosController.js';
 const router = express.Router();
 
 // GET /api/documentos -> Obtener todos los documentos
-router.get('/api/utilidad', protegerRuta, getGraficoUtilidad);
-router.get('/api/centros', protegerRuta, getCentros);
+router.get('/utilidad', protegerRuta, getGraficoUtilidad);
+router.get('/centros', protegerRuta, getCentros);
 
 export default router;
