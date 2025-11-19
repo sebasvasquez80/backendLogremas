@@ -159,3 +159,35 @@ export const getGraficoNomina = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener datos del gráfico de nómina', error: error.message });
     }
 };
+
+export const getGraficoGastos = async (req, res) => {
+    try {
+        const { centroId, ano, mesInicio, mesFin } = req.query;
+
+        if (!centroId || !ano || !mesInicio || !mesFin) {
+            return res.status(400).json({ 
+                message: 'Se requiere Centro, Año, Mes de Inicio y Mes de Fin.' 
+            });
+        }
+
+        // Llamamos a la RPC para obtener los datos puros de los 5 gastos
+        const { data, error } = await supabase.rpc('get_gastos_grafico', {
+            centro_id_param: centroId,
+            ano_param: ano,
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // RETORNAMOS LOS DATOS PUROS
+        // Formato: [ { fecha_label: 'Ene', nomina: 96M, aux_transporte: 8M, ... }, ... ]
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error en getGraficoGastos:', error.message); 
+        res.status(500).json({ message: 'Error al obtener datos del gráfico de gastos', error: error.message });
+    }
+};
