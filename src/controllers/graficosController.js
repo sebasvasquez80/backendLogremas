@@ -34,22 +34,29 @@ export const getGraficoUtilidad = async (req, res) => {
     }
 };
 
-// ... (getCentros está correcto, no se muestra aquí) ...
-
-// Controlador para obtener la lista de todos los centros (NO CAMBIA)
+// Controlador para obtener la lista de todos los centros
 export const getCentros = async (req, res) => {
     try {
-        // Consultamos directamente la tabla 'centros'
-        const { data, error } = await supabase
+        // Leemos el nuevo parámetro de la URL
+        const { contratoId } = req.query; 
+
+        let query = supabase
           .from('centros')
-          .select('id, nombre') // Usando 'nombre' según tu última confirmación
-          .order('nombre', { ascending: true }); 
+          .select('id, nombre') 
+          .order('nombre', { ascending: true });
+
+        // APLICAMOS EL FILTRO CONDICIONAL
+        if (contratoId) {
+            // Filtra los centros por el ID de contrato
+            query = query.eq('contrato_id', contratoId);
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             throw error;
         }
 
-        // Retornamos el array de centros
         res.status(200).json(data);
 
     } catch (error) {
@@ -58,7 +65,35 @@ export const getCentros = async (req, res) => {
     }
 };
 
+// En graficosController.js
 
+export const getContratos = async (req, res) => {
+    try {
+        // Consultamos la tabla 'contratos'
+        const { data, error } = await supabase
+          .from('contratos')
+          .select('id, nombre') 
+          .order('nombre', { ascending: true });
+
+        if (error) {
+            throw error;
+        }
+
+        // Renombramos 'nombre_empresa' a 'nombre' para que coincida con la estructura del frontend
+        const contratosFormateados = data.map(contrato => ({
+            id: contrato.id,
+            nombre: contrato.nombre 
+        }));
+
+        res.status(200).json(contratosFormateados);
+
+    } catch (error) {
+        console.error('Error en getContratos:', error.message);
+        res.status(500).json({ message: 'Error al obtener lista de contratos', error: error.message });
+    }
+};
+
+// ... (El resto de tus controladores) ...
 export const getGraficoPersonas = async (req, res) => {
     try {
         const { centroId, ano, mesInicio, mesFin } = req.query;
