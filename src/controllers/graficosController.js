@@ -291,3 +291,34 @@ export const getGraficoSalarioTransporte = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener datos del gráfico de Salario vs Transporte', error: error.message });
     }
 };
+
+export const getGraficoNovedades = async (req, res) => {
+    try {
+        const { centroId, ano, mesInicio, mesFin } = req.query;
+
+        if (!centroId || !ano || !mesInicio || !mesFin) {
+            return res.status(400).json({ 
+                message: 'Se requiere Centro de Nómina, Año, Mes de Inicio y Mes de Fin.' 
+            });
+        }
+
+        // Llamamos a la RPC para obtener los datos puros de las 5 novedades
+        const { data, error } = await supabase.rpc('get_novedades_grafico', {
+            centro_id_param: centroId,
+            ano_param: ano,
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // RETORNAMOS LOS DATOS PUROS
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error en getGraficoNovedades:', error.message); 
+        res.status(500).json({ message: 'Error al obtener datos del gráfico de Novedades', error: error.message });
+    }
+};

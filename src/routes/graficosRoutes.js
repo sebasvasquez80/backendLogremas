@@ -6,7 +6,7 @@ import { getGraficoPersonas } from '../controllers/graficosController.js';
 import { getGraficoFacturacion } from '../controllers/graficosController.js';
 import { getGraficoNomina } from '../controllers/graficosController.js';
 import { getGraficoGastos } from '../controllers/graficosController.js';
-import { getContratos, getCentrosNomina, getGraficoSalarioTransporte } from '../controllers/graficosController.js';
+import { getContratos, getCentrosNomina, getGraficoSalarioTransporte, getGraficoNovedades } from '../controllers/graficosController.js';
 
 
 const router = express.Router();
@@ -24,5 +24,6 @@ router.get('/contratos', protegerRuta, getContratos);
 // Ruta para obtener centros de nómina (filtrados por contrato)
 router.get('/centros-nomina', protegerRuta, getCentrosNomina); 
 router.get('/salario-transporte', protegerRuta, getGraficoSalarioTransporte); 
+router.get('/novedades', protegerRuta, getGraficoNovedades); 
 
 export default router;
