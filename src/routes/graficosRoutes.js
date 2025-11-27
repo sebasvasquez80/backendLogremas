@@ -6,7 +6,8 @@ import { getGraficoPersonas } from '../controllers/graficosController.js';
 import { getGraficoFacturacion } from '../controllers/graficosController.js';
 import { getGraficoNomina } from '../controllers/graficosController.js';
 import { getGraficoGastos } from '../controllers/graficosController.js';
-import { getContratos } from '../controllers/graficosController.js';
+import { getContratos, getCentrosNomina, getGraficoSalarioTransporte } from '../controllers/graficosController.js';
+
 
 const router = express.Router();
 
@@ -18,5 +19,10 @@ router.get('/facturacion', protegerRuta, getGraficoFacturacion);
 router.get('/nomina', protegerRuta, getGraficoNomina);
 router.get('/gastos', protegerRuta, getGraficoGastos);
 router.get('/contratos', protegerRuta, getContratos);
+
+// --- NUEVAS RUTAS DE NÓMINA ---
+// Ruta para obtener centros de nómina (filtrados por contrato)
+router.get('/centros-nomina', protegerRuta, getCentrosNomina); 
+router.get('/salario-transporte', protegerRuta, getGraficoSalarioTransporte); 
 
 export default router;

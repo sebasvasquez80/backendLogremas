@@ -226,3 +226,68 @@ export const getGraficoGastos = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener datos del gráfico de gastos', error: error.message });
     }
 };
+
+// ... (Tus importaciones y funciones existentes) ...
+
+// NUEVO CONTROLADOR: Obtiene centros de nómina filtrados por contrato
+export const getCentrosNomina = async (req, res) => {
+    try {
+        const { contratoId } = req.query; 
+
+        let query = supabase
+          .from('centro_nomina')
+          .select('id, nombre') // Usamos 'nombre' como se definió
+          .order('nombre', { ascending: true });
+
+        // APLICAMOS EL FILTRO CONDICIONAL: Solo centros ligados al contrato seleccionado
+        if (contratoId) {
+            query = query.eq('contrato_id', contratoId);
+        }
+
+        const { data, error } = await query;
+
+        if (error) {
+            throw error;
+        }
+
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error en getCentrosNomina:', error.message);
+        res.status(500).json({ message: 'Error al obtener lista de centros de nómina', error: error.message });
+    }
+};
+
+
+// NUEVO CONTROLADOR: Obtiene datos de Salario vs Transporte
+export const getGraficoSalarioTransporte = async (req, res) => {
+    try {
+        const { centroId, ano, mesInicio, mesFin } = req.query;
+
+        if (!centroId || !ano || !mesInicio || !mesFin) {
+            return res.status(400).json({ 
+                message: 'Se requiere Centro de Nómina, Año, Mes de Inicio y Mes de Fin.' 
+            });
+        }
+
+        // Llamamos a la RPC para obtener los datos puros (Salario y Transporte)
+        const { data, error } = await supabase.rpc('get_salario_transporte_grafico', {
+            centro_id_param: centroId,
+            ano_param: ano,
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // RETORNAMOS LOS DATOS PUROS
+        // Formato: [ { fecha_label: 'Ene', salario_total: 150M, transporte_total: 10M }, ... ]
+        res.status(200).json(data);
+
+    } catch (error) {
+        console.error('Error en getGraficoSalarioTransporte:', error.message); 
+        res.status(500).json({ message: 'Error al obtener datos del gráfico de Salario vs Transporte', error: error.message });
+    }
+};
