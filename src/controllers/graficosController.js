@@ -322,3 +322,34 @@ export const getGraficoNovedades = async (req, res) => {
         res.status(500).json({ message: 'Error al obtener datos del gráfico de Novedades', error: error.message });
     }
 };
+
+export const getGraficoTortaNovedades = async (req, res) => {
+    try {
+        const { centroId, ano, mesInicio, mesFin } = req.query;
+
+        if (!centroId || !ano || !mesInicio || !mesFin) {
+            return res.status(400).json({ 
+                message: 'Se requiere Centro de Nómina, Año, Mes de Inicio y Mes de Fin.' 
+            });
+        }
+
+        // Llamamos a la RPC para obtener la única fila de datos totales
+        const { data, error } = await supabase.rpc('get_novedades_torta', {
+            centro_id_param: centroId,
+            ano_param: ano,
+            mes_inicio_param: mesInicio, 
+            mes_fin_param: mesFin
+        });
+
+        if (error) {
+            throw error;
+        }
+
+        // RETORNAMOS SOLO EL PRIMER OBJETO (la fila única de totales)
+        res.status(200).json(data[0] || {}); 
+
+    } catch (error) {
+        console.error('Error en getGraficoTortaNovedades:', error.message); 
+        res.status(500).json({ message: 'Error al obtener datos del gráfico de torta de Novedades', error: error.message });
+    }
+};
